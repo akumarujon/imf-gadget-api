@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { gadgets } from "./schema";
 
+import { GadgetStatus } from "./types";
+
 import { validate as isValidUUID } from "uuid";
 
 export async function getGadget(id) {
@@ -13,7 +15,7 @@ export async function getGadget(id) {
 }
 
 export async function getGadgetsByStatus(
-  status: "Available" | "Deployed" | "Destroyed" | "Decommissioned",
+  status: GadgetStatus,
 ) {
   const result = await db.select().from(gadgets).where(
     eq(gadgets.status, status),
@@ -28,10 +30,8 @@ export async function getGadgets() {
   return result;
 }
 
-export async function createGadget(req, res) {
-  const body = req.body;
-
-  const result = await db.insert(gadgets).values(req.body);
+export async function createGadget(name: string, status: GadgetStatus) {
+  const result = await db.insert(gadgets).values({ name, status });
 
   return result;
 }
@@ -39,7 +39,7 @@ export async function createGadget(req, res) {
 export async function updateGadget(
   id: string,
   name?: string,
-  status?: "Available" | "Deployed" | "Destroyed" | "Decommissioned",
+  status?: GadgetStatus,
 ) {
   if (name) {
     await db.update(gadgets).set({ name }).where(eq(gadgets.id, id));
