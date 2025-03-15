@@ -1,0 +1,226 @@
+openapi: 3.0.0
+info:
+  title: Gadgets API
+  description: API for managing gadgets including creating, reading, updating, and deleting operations
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /gadgets:
+    get:
+      summary: Get all gadgets
+      description: Retrieves a list of all gadgets
+      operationId: getGadgets
+      responses:
+        "200":
+          description: A JSON array of gadgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Gadget"
+    post:
+      summary: Create a new gadget
+      description: Creates a new gadget with the provided information
+      operationId: createGadget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Name of the gadget
+                status:
+                  type: string
+                  description: Status of the gadget
+      responses:
+        "200":
+          description: Gadget created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Gadget is created successfully
+        "400":
+          description: Bad request - missing required parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  error:
+                    type: string
+                    example: Body is missing status or name parameter.
+
+  /gadgets/{id}:
+    get:
+      summary: Get a specific gadget
+      description: Retrieves details of a specific gadget by its ID
+      operationId: getGadget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the gadget to retrieve
+      responses:
+        "200":
+          description: A gadget object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Gadget"
+    patch:
+      summary: Update a specific gadget
+      description: Updates details of a specific gadget by its ID
+      operationId: updateGadget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the gadget to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name of the gadget
+                status:
+                  type: string
+                  description: New status of the gadget
+      responses:
+        "200":
+          description: Gadget updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Gadget was updated successfully
+        "400":
+          description: Bad request - missing required parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  error:
+                    type: string
+                    example: Body is missing status and name parameter.
+        "422":
+          description: Unprocessable entity - update failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 422
+                  message:
+                    type: string
+                    example: Unspecified error occured
+    delete:
+      summary: Decommission a gadget by path parameter
+      description: Decommissions a gadget specified by ID in the path
+      operationId: decommissionGadgetByPath
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the gadget to decommission
+      responses:
+        "200":
+          description: Gadget decommissioned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Gadget is decommissioned successfully.
+  /gadgets/{id}/self-destruct:
+    post:
+      summary: Delete a gadget permanently
+      description: Permanently deletes a gadget using the self-destruct functionality
+      operationId: deleteGadget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the gadget to delete
+      responses:
+        "200":
+          description: Gadget deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Gadget is deleted successfully
+components:
+  schemas:
+    Gadget:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID for the gadget
+          example: 5198499c-2c35-4cfe-9587-6c4af7f40663
+        name:
+          type: string
+          description: Name of the gadget
+        status:
+          type: string
+          description: Current status of the gadget
+          enum:
+            - Available
+            - Deployed
+            - Destroyed
+            - Decommissioned
+          example: Available
