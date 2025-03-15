@@ -8,6 +8,8 @@ import {
   getGadgetsByStatus,
   updateGadget,
 } from "./controllers";
+import { GadgetStatus } from "./types";
+import { capitalize, isCapitalized } from "./utils";
 
 app.get(["/gadgets", "/gadgets/:id"], async (req, res) => {
   const id = req.params.id;
@@ -18,30 +20,31 @@ app.get(["/gadgets", "/gadgets/:id"], async (req, res) => {
   let query_status = req.query.status;
 
   if (query_status) {
-    query_status = query_status.toString().toLowerCase();
+    query_status = query_status.toString();
 
-    type GadgetStatus =
-      | "Available"
-      | "Deployed"
-      | "Destroyed"
-      | "Decommissioned";
-    const listStatus = new Set([
+    console.log(query_status);
+
+    if (!isCapitalized(query_status)) {
+      res.json({ "message": "Status must be capitalized" });
+    }
+
+    const validStatuses = new Set([
       "Available",
       "Deployed",
       "Destroyed",
       "Decommissioned",
     ]);
-    const normalizedStatus = query_status.charAt(0).toUpperCase() +
-      query_status.slice(1).toLowerCase();
 
-    if (listStatus.has(normalizedStatus)) {
-      const result = await getGadgetsByStatus(query_status as GadgetStatus);
-
-      res.status(200);
-      res.send(result);
+    if (!validStatuses.has(query_status)) {
+      res.status(400);
+      res.json({ message: "Given status does not exist" });
     }
-  }
 
+    const result = await getGadgetsByStatus(query_status as GadgetStatus);
+
+    res.status(200);
+    res.json(result);
+  }
   res.json(await getGadgets());
 });
 
@@ -54,7 +57,10 @@ app.post("/gadgets", async (req, res) => {
     });
   }
 
-  await createGadget(req, res);
+  await createGadget(
+    req.body.name,
+    capitalize(req.body.status) as GadgetStatus,
+  );
 
   res.status(200);
   res.json({
@@ -80,7 +86,7 @@ app.patch("/gadgets/:id", async (req, res) => {
   if (params_id) {
     const updateEvent = await updateGadget(
       params_id,
-      req.body.name ? req.body.name : req.body.status,
+      req.body.name ? req.body.name : capitalize(req.body.status),
     );
 
     res.json(
