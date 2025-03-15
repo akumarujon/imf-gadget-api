@@ -12,6 +12,13 @@ paths:
       summary: Get all gadgets
       description: Retrieves a list of all gadgets
       operationId: getGadgets
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["Available", "Deployed", "Destroyed", "Decommissioned"]
       responses:
         "200":
           description: A JSON array of gadgets
