@@ -11,3 +11,16 @@ export type Gadget = {
   name: string;
   status: GadgetStatus;
 };
+
+/**
+ * Something
+ */
+export interface JSONResponse {
+  success: boolean;
+  message: string;
+  data: Gadget | Gadget[];
+  meta: {
+    time: string;
+    requestID: string;
+  };
+}
