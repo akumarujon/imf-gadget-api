@@ -2,14 +2,20 @@ import { app } from "./app";
 import {
   createGadget,
   decommissionGadget,
-  deleteGadget,
+  destroyGadget,
   getGadget,
   getGadgets,
   getGadgetsByStatus,
   updateGadget,
 } from "./controllers";
-import { GadgetStatus } from "./types";
+import { GadgetStatus, JSONResponse } from "./types";
 import { capitalize, isCapitalized } from "./utils";
+
+import { StatusCodes } from "http-status-codes";
+
+app.get("/", (req, res) => {
+  res.status(302).redirect("/docs");
+});
 
 app.get(["/gadgets", "/gadgets/:id"], async (req, res) => {
   const id = req.params.id;
@@ -25,7 +31,17 @@ app.get(["/gadgets", "/gadgets/:id"], async (req, res) => {
     console.log(query_status);
 
     if (!isCapitalized(query_status)) {
-      res.json({ "message": "Status must be capitalized" });
+      res.status(StatusCodes.BAD_REQUEST).json(
+        {
+          success: false,
+          message: "Status must be capitalized",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      );
     }
 
     const validStatuses = new Set([
@@ -36,25 +52,49 @@ app.get(["/gadgets", "/gadgets/:id"], async (req, res) => {
     ]);
 
     if (!validStatuses.has(query_status)) {
-      res.status(400);
-      res.json({ message: "Given status does not exist" });
+      res.status(StatusCodes.BAD_REQUEST).json(
+        {
+          success: false,
+          message: "Given status does not exist",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      );
     }
 
     const result = await getGadgetsByStatus(query_status as GadgetStatus);
 
-    res.status(200);
-    res.json(result);
+    res.status(StatusCodes.OK).json(
+      {
+        success: true,
+        message: "",
+        data: result,
+        meta: {
+          time: new Date().toLocaleString(),
+          requestID: res.locals.requestID,
+        },
+      } satisfies JSONResponse,
+    );
   }
   res.json(await getGadgets());
 });
 
 app.post("/gadgets", async (req, res) => {
   if (!req.body.name || !req.body.status) {
-    res.status(400);
-    res.json({
-      status: 400,
-      error: "Body is missing status or name parameter.",
-    });
+    res.status(StatusCodes.BAD_REQUEST).json(
+      {
+        success: false,
+        message: "Body is missing status or name parameter.",
+        data: [],
+        meta: {
+          time: new Date().toLocaleString(),
+          requestID: res.locals.requestID,
+        },
+      } satisfies JSONResponse,
+    );
   }
 
   await createGadget(
@@ -62,22 +102,34 @@ app.post("/gadgets", async (req, res) => {
     capitalize(req.body.status) as GadgetStatus,
   );
 
-  res.status(200);
-  res.json({
-    status: 200,
-    message: "Gadget is created successfully",
-  });
+  res.status(StatusCodes.OK).json(
+    {
+      success: true,
+      message: "Gadget is created successfully",
+      data: [],
+      meta: {
+        time: new Date().toLocaleString(),
+        requestID: res.locals.requestID,
+      },
+    } satisfies JSONResponse,
+  );
 });
 
 app.patch("/gadgets/:id", async (req, res) => {
   const body = req.body;
 
   if (!req.body.name && !req.body.status) {
-    res.status(400);
-    res.json({
-      status: 400,
-      error: "Body is missing status and name parameter.",
-    });
+    res.status(StatusCodes.BAD_REQUEST).json(
+      {
+        success: false,
+        message: "Body is missing status and name parameter.",
+        data: [],
+        meta: {
+          time: new Date().toLocaleString(),
+          requestID: res.locals.requestID,
+        },
+      } satisfies JSONResponse,
+    );
   }
 
   const params_id = req.params.id;
@@ -89,11 +141,30 @@ app.patch("/gadgets/:id", async (req, res) => {
       req.body.name ? req.body.name : capitalize(req.body.status),
     );
 
-    res.json(
-      updateEvent.ok
-        ? { status: 200, message: "Gadget was updated successfully" }
-        : { status: 422, message: "Unspecified error occured" },
-    );
+    updateEvent.ok
+      ? res.status(StatusCodes.OK).json(
+        {
+          success: true,
+          message: "Gadget was updated successfully.",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      )
+      : res.status(StatusCodes.UNPROCESSABLE_ENTITY).json(
+        {
+          success: false,
+          message: "Unspecified error occured.",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      );
+
     return;
   }
 
@@ -103,11 +174,29 @@ app.patch("/gadgets/:id", async (req, res) => {
       req.body.name ? req.body.name : req.body.status,
     );
 
-    res.json(
-      updateEvent.ok
-        ? { status: 200, message: "Gadget was updated successfully" }
-        : { status: 422, message: "Unspecified error occured" },
-    );
+    updateEvent.ok
+      ? res.status(StatusCodes.OK).json(
+        {
+          success: true,
+          message: "Gadget was updated successfully.",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      )
+      : res.status(StatusCodes.UNPROCESSABLE_ENTITY).json(
+        {
+          success: false,
+          message: "Unspecified error occured.",
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      );
     return;
   }
 });
@@ -118,10 +207,31 @@ app.delete("/gadgets/:id", async (req, res) => {
 
   const result = await decommissionGadget(params_id ? params_id : query_id!);
 
-  if (!result.ok) res.json({ message: result.message });
+  if (!result.ok) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+      {
+        success: false,
+        message: result.message!,
+        data: [],
+        meta: {
+          time: new Date().toLocaleString(),
+          requestID: res.locals.requestID,
+        },
+      } satisfies JSONResponse,
+    );
+  }
 
-  res.status(200);
-  res.json({ status: 200, message: "Gadget is decommissioned successfully." });
+  res.status(StatusCodes.OK).json(
+    {
+      success: true,
+      message: result.message,
+      data: [],
+      meta: {
+        time: new Date().toLocaleString(),
+        requestID: res.locals.requestID,
+      },
+    } satisfies JSONResponse,
+  );
 });
 
 app.post("/gadgets/:id/self-destruct", async (req, res) => {
@@ -129,15 +239,34 @@ app.post("/gadgets/:id/self-destruct", async (req, res) => {
   const gadget_id = req.params.id;
 
   if (confirmation_code) {
-    const result = await deleteGadget(gadget_id);
+    const result = await destroyGadget(gadget_id);
 
     if (!result.ok) {
-      res.status(400);
-      res.send({ message: result.message });
+      res.status(StatusCodes.BAD_REQUEST).json(
+        {
+          success: false,
+          message: result.message,
+          data: [],
+          meta: {
+            time: new Date().toLocaleString(),
+            requestID: res.locals.requestID,
+          },
+        } satisfies JSONResponse,
+      );
       return;
     }
 
-    res.send(result.message);
+    res.status(StatusCodes.OK).json(
+      {
+        success: true,
+        message: result.message,
+        data: [],
+        meta: {
+          time: new Date().toLocaleString(),
+          requestID: res.locals.requestID,
+        },
+      } satisfies JSONResponse,
+    );
     return;
   }
 });
