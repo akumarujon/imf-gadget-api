@@ -52,7 +52,7 @@ export async function updateGadget(
 
 export async function decommissionGadget(
   id: string,
-) {
+): Promise<{ ok: boolean; message: string }> {
   if (!isValidUUID(id)) {
     return { ok: false, message: "Wrong UUID was provided" };
   }
@@ -70,17 +70,29 @@ export async function decommissionGadget(
   await db.update(gadgets).set({ status: "Decommissioned" }).where(
     eq(gadgets.id, id),
   );
-  return { ok: true };
+  return { ok: true, message: "Gadget was Decommissioned successfully" };
 }
 
-export async function deleteGadget(id: string) {
+export async function destroyGadget(
+  id: string,
+): Promise<{ ok: boolean; message: string }> {
+  if (!isValidUUID(id)) {
+    return { ok: false, message: "Wrong UUID was provided" };
+  }
+
   const check = await db.select().from(gadgets).where(eq(gadgets.id, id));
 
   if (check.length == 0) {
-    return { ok: false, message: "There is no gadget to delete" };
+    return { ok: false, message: "There is no gadget to destroy" };
   }
 
-  await db.delete(gadgets).where(eq(gadgets.id, id));
+  if (check[0].status == "Destroyed") {
+    return { ok: false, message: "Gadget was already destroyed" };
+  }
 
-  return { ok: true, message: "Gadget is deleted successfully" };
+  await db.update(gadgets).set({ "status": "Destroyed" }).where(
+    eq(gadgets.id, id),
+  );
+
+  return { ok: true, message: "Gadget is destroyed successfully" };
 }
