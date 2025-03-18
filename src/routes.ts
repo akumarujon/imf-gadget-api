@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   if (req.url == "/favicon.ico") return next();
 
   res.locals.requestID = v4();
-
+  
   // Request LOG
   const requestLog = {
     type: "REQUEST",
@@ -80,6 +80,7 @@ const swaggerDoc = yaml.load("./docs/docs.yaml");
 app.use("/docs", swaggerui.serve, swaggerui.setup(swaggerDoc));
 app.post("/register", registerUser);
 app.post("/login", verifyLoginUser);
+app.get("/", defaultRoute);
 
 app.use((req, res, next) => {
   const authHeader = req.header("Authorization");
@@ -119,7 +120,6 @@ app.use((req, res, next) => {
   }
 });
 
-app.get("/", defaultRoute);
 app.get(["/gadgets", "/gadgets/:id"], getGadgetsRoute);
 app.post("/gadgets", createGadgetRoute);
 app.patch("/gadgets/:id", updateGadgetRoute);
