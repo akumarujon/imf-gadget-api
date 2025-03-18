@@ -8,105 +8,105 @@ servers:
     description: Local development server
 paths:
   /register:
-      post:
-        summary: Register a new user
-        description: Creates a new user account with a hashed password.
-        requestBody:
-          required: true
+    post:
+      summary: Register a new user
+      description: Creates a new user account with a hashed password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        "201":
+          description: User registered successfully
           content:
             application/json:
               schema:
                 type: object
-                required:
-                  - username
-                  - password
                 properties:
-                  username:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
                     type: string
-                    example: "john_doe"
-                  password:
+                    example: "User registered successfully."
+        "400":
+          description: Bad request (missing fields or user already exists)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
                     type: string
-                    example: "password123"
-        responses:
-          "201":
-            description: User registered successfully
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: boolean
-                      example: true
-                    message:
-                      type: string
-                      example: "User registered successfully."
-          "400":
-            description: Bad request (missing fields or user already exists)
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: boolean
-                      example: false
-                    message:
-                      type: string
-                      example: "Username or Password is missing in body."
+                    example: "Username or Password is missing in body."
   /login:
-      post:
-        summary: Authenticate a user and return a JWT token
-        description: Logs in an existing user and returns a JWT token for authentication.
-        requestBody:
-          required: true
+    post:
+      summary: Authenticate a user and return a JWT token
+      description: Logs in an existing user and returns a JWT token for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        "201":
+          description: Successful login, returns JWT token
           content:
             application/json:
               schema:
                 type: object
-                required:
-                  - username
-                  - password
                 properties:
-                  username:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
                     type: string
-                    example: "john_doe"
-                  password:
+                    example: "Login successful."
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
                     type: string
-                    example: "password123"
-        responses:
-          "201":
-            description: Successful login, returns JWT token
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: boolean
-                      example: true
-                    message:
-                      type: string
-                      example: "Login successful."
-                    data:
-                      type: object
-                      properties:
-                        token:
-                          type: string
-                          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          "400":
-            description: Invalid username or password
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: boolean
-                      example: false
-                    message:
-                      type: string
-                      example: "Invalid credentials."
+                    example: "Invalid credentials."
 
   /gadgets:
     get:
@@ -348,4 +348,4 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT 
+      bearerFormat: JWT

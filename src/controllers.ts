@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import { db } from "./db";
-import { gadgets, users } from "./schema";
+import { db } from "./db.ts";
+import { gadgets, users } from "./schema.ts";
 
-import { GadgetStatus } from "./types";
+import { GadgetStatus } from "./types.ts";
 
 import { validate as isValidUUID } from "uuid";
 import bcryptjs from "bcryptjs";
