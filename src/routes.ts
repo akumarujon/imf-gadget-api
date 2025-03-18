@@ -12,7 +12,7 @@ import {
 } from "./handlers.ts";
 
 import express from "express";
-
+import cors from "cors"
 import fs from "node:fs";
 import { v4 } from "uuid";
 
@@ -75,6 +75,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use(cors())
 
 const swaggerDoc = yaml.load("./docs/docs.yaml");
 app.use("/docs", swaggerui.serve, swaggerui.setup(swaggerDoc));
