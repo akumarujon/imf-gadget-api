@@ -15,6 +15,8 @@ environment.
 - Filter gadgets by status
 - Decommission or self-destruct gadgets
 - OpenAPI support
+- Write logs to `requests`/`response` file
+- Deployment
 
 ### Installation
 
@@ -42,12 +44,17 @@ pnpm run dev
 
 ### API Endpoints
 
-- GET /gadgets - List all gadgets
-- POST /gadgets - Create a new gadget
-- GET /gadgets/{id} - Get a specific gadget
-- PATCH /gadgets/{id} - Update a gadget
-- DELETE /gadgets/{id} - Decommission a gadget
-- POST /gadgets/{id}/self-destruct - Delete a gadget permanently
+- GET `/` - Redirect to `/docs`
+- GET `/docs` - Swagger UI
+- POST `/register` - Create a new user
+- POST `/login` - Sign in
+
+- GET `/gadgets` - List all gadgets
+- POST `/gadgets` - Create a new gadget
+- GET `/gadgets/{id}` - Get a specific gadget
+- PATCH `/gadgets/{id}` - Update a gadget
+- DELETE `/gadgets/{id}` - Decommission a gadget
+- POST `/gadgets/{id}/self-destruct` - Delete a gadget permanently
 
 ### Tech Stack
 
