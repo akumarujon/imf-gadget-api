@@ -18,7 +18,7 @@ export type Gadget = {
 export interface JSONResponse {
   success: boolean;
   message: string;
-  data: Gadget | Gadget[];
+  data: Gadget | Gadget[] | { token: string };
   meta: {
     time: string;
     requestID: string;

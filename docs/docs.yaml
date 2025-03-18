@@ -7,9 +7,112 @@ servers:
   - url: http://localhost:3000
     description: Local development server
 paths:
+  /register:
+      post:
+        summary: Register a new user
+        description: Creates a new user account with a hashed password.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - username
+                  - password
+                properties:
+                  username:
+                    type: string
+                    example: "john_doe"
+                  password:
+                    type: string
+                    example: "password123"
+        responses:
+          "201":
+            description: User registered successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "User registered successfully."
+          "400":
+            description: Bad request (missing fields or user already exists)
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Username or Password is missing in body."
+  /login:
+      post:
+        summary: Authenticate a user and return a JWT token
+        description: Logs in an existing user and returns a JWT token for authentication.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - username
+                  - password
+                properties:
+                  username:
+                    type: string
+                    example: "john_doe"
+                  password:
+                    type: string
+                    example: "password123"
+        responses:
+          "201":
+            description: Successful login, returns JWT token
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "Login successful."
+                    data:
+                      type: object
+                      properties:
+                        token:
+                          type: string
+                          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          "400":
+            description: Invalid username or password
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Invalid credentials."
+
   /gadgets:
     get:
       summary: Get all gadgets
+      security:
+        - BearerAuth: []
       description: Retrieves a list of all gadgets
       operationId: getGadgets
       parameters:
@@ -30,6 +133,8 @@ paths:
                   $ref: "#/components/schemas/Gadget"
     post:
       summary: Create a new gadget
+      security:
+        - BearerAuth: []
       description: Creates a new gadget with the provided information
       operationId: createGadget
       requestBody:
@@ -79,6 +184,8 @@ paths:
   /gadgets/{id}:
     get:
       summary: Get a specific gadget
+      security:
+        - BearerAuth: []
       description: Retrieves details of a specific gadget by its ID
       operationId: getGadget
       parameters:
@@ -97,6 +204,8 @@ paths:
                 $ref: "#/components/schemas/Gadget"
     patch:
       summary: Update a specific gadget
+      security:
+        - BearerAuth: []
       description: Updates details of a specific gadget by its ID
       operationId: updateGadget
       parameters:
@@ -161,6 +270,8 @@ paths:
                     example: Unspecified error occured
     delete:
       summary: Decommission a gadget by path parameter
+      security:
+        - BearerAuth: []
       description: Decommissions a gadget specified by ID in the path
       operationId: decommissionGadgetByPath
       parameters:
@@ -187,6 +298,8 @@ paths:
   /gadgets/{id}/self-destruct:
     post:
       summary: Delete a gadget permanently
+      security:
+        - BearerAuth: []
       description: Permanently deletes a gadget using the self-destruct functionality
       operationId: deleteGadget
       parameters:
@@ -231,3 +344,8 @@ components:
             - Destroyed
             - Decommissioned
           example: Available
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 

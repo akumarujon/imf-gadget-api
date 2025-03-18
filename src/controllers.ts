@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { gadgets } from "./schema";
+import { gadgets, users } from "./schema";
 
 import { GadgetStatus } from "./types";
 
 import { validate as isValidUUID } from "uuid";
+import bcryptjs from "bcryptjs";
 
 export async function getGadget(id) {
   const result = await db.select().from(gadgets).where(
@@ -95,4 +96,40 @@ export async function destroyGadget(
   );
 
   return { ok: true, message: "Gadget is destroyed successfully" };
+}
+
+export async function createUser(
+  username: string,
+  password: string,
+): Promise<{ ok: boolean; message: string }> {
+  const check = await db.select().from(users).where(
+    eq(users.username, username),
+  );
+
+  if (check.length != 0) {
+    return { ok: false, message: "This username is not empty" };
+  }
+
+  await db.insert(users).values({ username, password });
+
+  return { ok: true, message: "User is created successfully" };
+}
+
+export async function loginUser(
+  username: string,
+  password: string,
+): Promise<{ ok: boolean; message: string }> {
+  const check = await db.select().from(users).where(
+    eq(users.username, username),
+  );
+
+  if (check.length == 0) {
+    return { ok: false, message: "This user doesn't exist" };
+  }
+
+  const passwordCheck = await bcryptjs.compare(password, check[0].password);
+
+  if (!passwordCheck) return { ok: false, message: "The password is wrong" };
+
+  return { ok: true, message: "The user logged in." };
 }
