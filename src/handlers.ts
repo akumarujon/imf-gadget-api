@@ -9,15 +9,15 @@ import {
   getGadgetsByStatus,
   loginUser,
   updateGadget,
-} from "./controllers";
-import { GadgetStatus, JSONResponse } from "./types";
-import { capitalize, isCapitalized } from "./utils";
+} from "./controllers.ts";
+import { GadgetStatus, JSONResponse } from "./types.ts";
+import { capitalize, isCapitalized } from "./utils.ts";
 import bcryptjs from "bcryptjs";
 import { StatusCodes } from "http-status-codes";
 
 import jwt from "jsonwebtoken";
 
-import { SECRET_KEY } from "./env";
+import { SECRET_KEY } from "./env.ts";
 
 // app.get("/")
 export function defaultRoute(req, res) {

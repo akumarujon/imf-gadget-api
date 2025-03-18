@@ -2,8 +2,8 @@
 
 ### Description
 
-The imf-gadget-api is a RESTful web service implementation built using Node.JS
-framework. This project was developed as a technical assessment task for
+The imf-gadget-api is a RESTful web service implementation built using Node.JS.
+This project was developed as a technical assessment task for
 [Upraised](https://www.upraised.co/), a career acceleration platform. The API
 demonstrates the ability to create scalable web services following REST
 architectural principles and modern development practices in TypeScipt/Node.JS

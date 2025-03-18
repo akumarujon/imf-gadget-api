@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { app } from "./app";
+import { app } from "./app.ts";
 import {
   createGadgetRoute,
   defaultRoute,
@@ -9,7 +9,7 @@ import {
   registerUser,
   updateGadgetRoute,
   verifyLoginUser,
-} from "./handlers";
+} from "./handlers.ts";
 
 import express from "express";
 
@@ -18,9 +18,9 @@ import { v4 } from "uuid";
 
 import swaggerui from "swagger-ui-express";
 import yaml from "yamljs";
-import { JSONResponse } from "./types";
+import { JSONResponse } from "./types.ts";
 import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "./env";
+import { SECRET_KEY } from "./env.ts";
 
 app.use(express.json());
 
