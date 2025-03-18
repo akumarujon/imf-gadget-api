@@ -7,3 +7,9 @@ export const gadgets = pgTable("gadgets", {
     .$type<"Available" | "Deployed" | "Destroyed" | "Decommissioned">()
     .notNull(),
 });
+
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  username: varchar("username", { length: 255 }).notNull(),
+  password: varchar("password").notNull(),
+});
