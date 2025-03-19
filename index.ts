@@ -1,4 +1,4 @@
-import pg from "pg"
+import pg from "pg";
 import { app, port } from "./src/index.ts";
 import "./src/routes.ts";
 

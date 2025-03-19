@@ -13,7 +13,19 @@ export type Gadget = {
 };
 
 /**
- * Something
+ * JSONResponse interface for better & specified JSON response
+ * Example:
+ * ```typescript
+ * export interface JSONResponse {
+  success: boolean;
+  message: string;
+  data: Gadget | Gadget[] | { token: string };
+  meta: {
+    time: string;
+    requestID: string;
+  };
+}
+```
  */
 export interface JSONResponse {
   success: boolean;

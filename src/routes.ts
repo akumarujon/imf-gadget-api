@@ -12,7 +12,7 @@ import {
 } from "./handlers.ts";
 
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 import fs from "node:fs";
 import { v4 } from "uuid";
 
@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   if (req.url == "/favicon.ico") return next();
 
   res.locals.requestID = v4();
-  
+
   // Request LOG
   const requestLog = {
     type: "REQUEST",
@@ -76,7 +76,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors())
+app.use(cors());
 
 const swaggerDoc = yaml.load("./docs/docs.yaml");
 app.use("/docs", swaggerui.serve, swaggerui.setup(swaggerDoc));
