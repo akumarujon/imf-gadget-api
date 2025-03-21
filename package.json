@@ -31,5 +31,11 @@
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
     "tsx": "^4.19.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@scarf/scarf",
+      "esbuild"
+    ]
   }
 }
