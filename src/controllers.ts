@@ -41,7 +41,7 @@ export async function getGadget(id) {
     eq(gadgets.id, id),
   );
 
-  return result;
+  return result[0];
 }
 
 /**
@@ -213,6 +213,12 @@ export async function updateGadget(
   name?: string,
   status?: GadgetStatus,
 ) {
+  const check = await db.select().from(gadgets).where(eq(gadgets.id, id));
+
+  if (check.length == 0) {
+    return { ok: false, message: "No gadget was found." };
+  }
+
   if (name) {
     await db.update(gadgets).set({ name }).where(eq(gadgets.id, id));
   } else {
