@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local development server
+  - url: https://imf-gadget-api.deno.dev
+    description: Production server on Deno deploy
 paths:
   /register:
     post:
