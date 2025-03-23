@@ -13,7 +13,6 @@ import {
 
 import express from "express";
 import cors from "cors";
-import fs from "node:fs";
 import { v4 } from "uuid";
 
 import swaggerui from "swagger-ui-express";

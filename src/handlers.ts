@@ -184,7 +184,7 @@ export async function verifyLoginUser(req, res) {
     expiresIn: 60 * 60 * 24 * 7,
   });
 
-  res.status(StatusCodes.CREATED).json(
+  res.status(StatusCodes.OK).json(
     {
       success: true,
       message: result.message,
