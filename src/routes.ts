@@ -40,13 +40,13 @@ app.use((req, res, next) => {
     headers: req.headers,
   };
 
-  fs.writeFile(
-    process.cwd() + "/logs/requests",
-    JSON.stringify(requestLog),
-    (err) => {
-      if (err) console.log("Error occured while writing REQUEST log: ", err);
-    },
-  );
+  // fs.writeFile(
+  //   process.cwd() + "/logs/requests",
+  //   JSON.stringify(requestLog),
+  //   (err) => {
+  //     if (err) console.log("Error occured while writing REQUEST log: ", err);
+  //   },
+  // );
 
   console.log(requestLog);
 
@@ -61,13 +61,13 @@ app.use((req, res, next) => {
       body: body,
     };
 
-    fs.writeFile(
-      process.cwd() + "/logs/responses",
-      JSON.stringify(responseLog),
-      (err) => {
-        if (err) console.log("Error occured while writing RESPONSE log: ", err);
-      },
-    );
+    // fs.writeFile(
+    //   process.cwd() + "/logs/responses",
+    //   JSON.stringify(responseLog),
+    //   (err) => {
+    //     if (err) console.log("Error occured while writing RESPONSE log: ", err);
+    //   },
+    // );
 
     console.log(responseLog);
     return originalJson.call(this, body);
